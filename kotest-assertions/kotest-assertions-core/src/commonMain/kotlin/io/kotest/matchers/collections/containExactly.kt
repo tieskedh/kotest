@@ -4,62 +4,59 @@ import io.kotest.assertions.show.Printed
 import io.kotest.assertions.show.show
 import io.kotest.matchers.Matcher
 import io.kotest.matchers.MatcherResult
-import io.kotest.matchers.neverNullMatcher
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
-import kotlin.jvm.JvmName
 
-@JvmName("shouldContainExactly_array")
-infix fun <T> Array<T>?.shouldContainExactly(expected: Array<T>) = this?.asList() should containExactly(*expected)
-fun <T> Array<T>?.shouldContainExactly(vararg expected: T) = this?.asList() should containExactly(*expected)
 
-infix fun <T, C : Collection<T>> C?.shouldContainExactly(expected: C) = this should containExactly(expected)
-fun <T> Collection<T>?.shouldContainExactly(vararg expected: T) = this should containExactly(*expected)
+infix fun <T> Iterable<T>.shouldContainExactly(expected: Iterable<T>) = this should containExactly(expected)
+fun <T> Iterable<T>.shouldContainExactly(vararg expected: T) = this should containExactly(*expected)
 
-fun <T> containExactly(vararg expected: T): Matcher<Collection<T>?> = containExactly(expected.asList())
+fun <T> containExactly(vararg expected: T)= containExactly(expected.asList())
 
 /** Assert that a collection contains exactly the given values and nothing else, in order. */
-fun <T, C : Collection<T>> containExactly(expected: C): Matcher<C?> = neverNullMatcher { actual ->
+fun <T> containExactly(expected: Iterable<T>) = object : Matcher<Iterable<T>> {
 
-   val passed = actual.size == expected.size && actual.zip(expected).all { (a, b) -> a == b }
+   override fun test(value: Iterable<T>): MatcherResult {
+      val value = value.toList()
+      val expected = expected.toList()
 
-   val failureMessage = {
+      val passed = value.size == expected.size && value.zip(expected).all { (a, b) -> a == b }
 
-      val missing = expected.filterNot { actual.contains(it) }
-      val extra = actual.filterNot { expected.contains(it) }
+      val failureMessage = {
 
-      val sb = StringBuilder()
-      sb.append("Expecting: ${expected.printed().value} but was: ${actual.printed().value}")
-      sb.append("\n")
-      if (missing.isNotEmpty()) {
-         sb.append("Some elements were missing: ")
-         sb.append(missing.printed().value)
-         if (extra.isNotEmpty()) {
-            sb.append(" and some elements were unexpected: ")
+         val missing = expected.filterNot { value.contains(it) }
+         val extra = value.filterNot { expected.contains(it) }
+
+         val sb = StringBuilder()
+         sb.append("Expecting: ${expected.printed().value} but was: ${value.printed().value}")
+         sb.append("\n")
+         if (missing.isNotEmpty()) {
+            sb.append("Some elements were missing: ")
+            sb.append(missing.printed().value)
+            if (extra.isNotEmpty()) {
+               sb.append(" and some elements were unexpected: ")
+               sb.append(extra.printed().value)
+            }
+         } else if (extra.isNotEmpty()) {
+            sb.append("Some elements were unexpected: ")
             sb.append(extra.printed().value)
          }
-      } else if (extra.isNotEmpty()) {
-         sb.append("Some elements were unexpected: ")
-         sb.append(extra.printed().value)
+         sb.toString()
       }
-      sb.toString()
-   }
 
-   MatcherResult(
-      passed,
-      failureMessage
-   ) { "Collection should not be exactly ${expected.printed().value}" }
+      return MatcherResult(
+         passed,
+         failureMessage
+      ) { "Collection should not be exactly ${expected.printed().value}" }
+   }
 }
 
-@JvmName("shouldNotContainExactly_array")
-infix fun <T> Array<T>?.shouldNotContainExactly(expected: Array<T>) = this?.asList() shouldNot containExactly(*expected)
-fun <T> Array<T>?.shouldNotContainExactly(vararg expected: T) = this?.asList() shouldNot containExactly(*expected)
+infix fun <T> Iterable<T>.shouldNotContainExactly(expected: Iterable<T>) = this shouldNot containExactly(expected)
+fun <T> Iterable<T>.shouldNotContainExactly(vararg expected: T) = this shouldNot containExactly(*expected)
 
-infix fun <T, C : Collection<T>> C?.shouldNotContainExactly(expected: C) = this shouldNot containExactly(expected)
-fun <T> Collection<T>?.shouldNotContainExactly(vararg expected: T) = this shouldNot containExactly(*expected)
-
-fun <T, C : Collection<T>> C.printed(): Printed {
+fun <T> Iterable<T>.printed(): Printed {
+   val list = this.toList()
    val expectedPrinted = take(20).joinToString(",\n  ", prefix = "[\n  ", postfix = "\n]") { it.show().value }
-   val expectedMore = if (size > 20) " ... (plus ${size - 20} more)" else ""
+   val expectedMore = if (list.size > 20) " ... (plus ${list.size - 20} more)" else ""
    return Printed("$expectedPrinted$expectedMore")
 }

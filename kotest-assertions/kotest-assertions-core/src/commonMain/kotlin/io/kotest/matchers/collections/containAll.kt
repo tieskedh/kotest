@@ -5,19 +5,15 @@ import io.kotest.matchers.MatcherResult
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldNot
 
-fun <T> Array<T>.shouldContainAll(vararg ts: T) = asList().shouldContainAll(ts)
-fun <T> Collection<T>.shouldContainAll(vararg ts: T) = this should containAll(*ts)
-infix fun <T> Array<T>.shouldContainAll(ts: Collection<T>) = asList().shouldContainAll(ts)
-infix fun <T> Collection<T>.shouldContainAll(ts: Collection<T>) = this should containAll(ts)
+fun <T> Iterable<T>.shouldContainAll(vararg ts: T) = this should containAll(*ts)
+infix fun <T> Iterable<T>.shouldContainAll(ts: Collection<T>) = this should containAll(ts)
 
-fun <T> Array<T>.shouldNotContainAll(vararg ts: T) = asList().shouldNotContainAll(ts)
-fun <T> Collection<T>.shouldNotContainAll(vararg ts: T) = this shouldNot containAll(*ts)
-infix fun <T> Array<T>.shouldNotContainAll(ts: Collection<T>) = asList().shouldNotContainAll(ts)
-infix fun <T> Collection<T>.shouldNotContainAll(ts: Collection<T>) = this shouldNot containAll(ts)
+fun <T> Iterable<T>.shouldNotContainAll(vararg ts: T) = this shouldNot containAll(*ts)
+infix fun <T> Iterable<T>.shouldNotContainAll(ts: Collection<T>) = this shouldNot containAll(ts)
 
 fun <T> containAll(vararg ts: T) = containAll(ts.asList())
-fun <T> containAll(ts: Collection<T>): Matcher<Collection<T>> = object : Matcher<Collection<T>> {
-   override fun test(value: Collection<T>): MatcherResult {
+fun <T> containAll(ts: Iterable<T>) = object : Matcher<Iterable<T>> {
+   override fun test(value: Iterable<T>): MatcherResult {
 
       val missing = ts.filterNot { value.contains(it) }
       val passed = missing.isEmpty()
