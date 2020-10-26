@@ -1,10 +1,11 @@
 object Libs {
 
-   const val kotlinVersion = "1.4.0"
+   const val kotlinVersion = "1.4.10"
    const val dokkaVersion = "0.10.1"
-   const val adarshrTestLoggerVersion = "2.0.0"
-   const val gradleVersionsPluginVersion = "0.28.0"
+   const val adarshrTestLoggerVersion = "2.1.1"
+   const val GradlePluginVersionsVersion = "0.33.0"
    const val kotestGradlePlugin = "0.1.4"
+   const val GradlePluginPublishVersion = "0.12.0"
 
    object Arrow {
       private const val version = "0.10.5"
@@ -75,6 +76,11 @@ object Libs {
       const val Konform = "io.konform:konform:0.2.0"
       const val KonformJs = "io.konform:konform-js:0.2.0"
       const val KonformJvm = "io.konform:konform-jvm:0.2.0"
+   }
+
+   object Kotlin {
+      const val Compiler = "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
+      const val Gradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
    }
 
    object Classgraph {

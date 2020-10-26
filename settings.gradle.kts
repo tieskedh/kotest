@@ -46,6 +46,8 @@ include("kotest-assertions:kotest-assertions-kotlinx-time")
 include("kotest-assertions:kotest-assertions-compiler")
 include("kotest-assertions:kotest-assertions-klock")
 include("kotest-assertions:kotest-assertions-sql")
+include("kotest-assertions:kotest-assertions-compiler-plugin")
+include("kotest-assertions:kotest-assertions-gradle-plugin")
 
 // base classes for property testing, plus std lib generators
 include("kotest-property")

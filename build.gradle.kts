@@ -27,7 +27,7 @@ plugins {
    // To get versions report, execute:
    // Win: .\gradlew.bat dependencyUpdates -Drevision=release
    // Other: ./gradlew dependencyUpdates -Drevision=release
-   id("com.github.ben-manes.versions") version Libs.gradleVersionsPluginVersion
+   id("com.github.ben-manes.versions") version Libs.GradlePluginVersionsVersion
 }
 
 tasks {
@@ -82,7 +82,6 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
    kotlinOptions.jvmTarget = "1.8"
-   kotlinOptions.apiVersion = "1.3"
 }
 
 val publications: PublicationContainer = (extensions.getByName("publishing") as PublishingExtension).publications
